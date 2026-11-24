@@ -45,3 +45,10 @@ it("each page has a header tab for every game, with its own tab marked current",
     assert.match(nav[0], new RegExp('aria-current="page">' + game.title + "</a>"));
   }
 });
+
+it("shared CSS leaves room at the bottom so a fixed host badge cannot cover controls", () => {
+  const css = fs.readFileSync(path.join(root, "shared/base.css"), "utf8");
+  assert.match(css, /--host-badge-clearance:\s*calc\(64px \+ env\(safe-area-inset-bottom/);
+  assert.match(css, /padding: 35px 28px calc\(24px \+ var\(--host-badge-clearance\)\)/);
+  assert.match(css, /padding: 22px 16px calc\(20px \+ var\(--host-badge-clearance\)\)/);
+});

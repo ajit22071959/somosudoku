@@ -1,6 +1,8 @@
 /* Shared look for every somo site/game: dark green #101715 with soft green radial gradients. */
 :root {
   color-scheme: dark;
+  /* Space so the host's fixed bottom-right badge does not cover controls when you scroll to the end. */
+  --host-badge-clearance: calc(64px + env(safe-area-inset-bottom, 0px));
   --ink: #edf2e7;
   --muted: #b0bdaf;
   --accent: #b0d6af;
@@ -36,7 +38,7 @@ button:disabled { cursor: not-allowed; opacity: .55; transform: none; }
 ::selection { background: #597b58; color: #fff; }
 a { color: var(--accent); }
 
-.shell { max-width: 1080px; margin: auto; padding: 35px 28px 24px; }
+.shell { max-width: 1080px; margin: auto; padding: 35px 28px calc(24px + var(--host-badge-clearance)); }
 
 header.site {
   display: flex;
@@ -158,7 +160,7 @@ footer.site { text-align: center; font-size: 11px; color: #a2b09b; margin: 24px 
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
 @media (max-width: 800px) {
-  .shell { padding: 22px 16px 20px; }
+  .shell { padding: 22px 16px calc(20px + var(--host-badge-clearance)); }
   header.site { margin-bottom: 18px; }
 }
 @media (max-width: 520px) {
