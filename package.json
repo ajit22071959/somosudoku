@@ -1,0 +1,9 @@
+{
+  "name": "somosudoku",
+  "private": true,
+  "description": "A calm daily sudoku in Easy, Medium and Hard, with pencil marks, hints and saved progress.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "rebrand": "node scripts/rebrand.js"
+  }
+}

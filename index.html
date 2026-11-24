@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101715">
+  <!-- brand:start (managed by `npm run rebrand` from site.config.js) -->
+  <meta name="description" content="A calm daily sudoku in Easy, Medium and Hard, with pencil marks, hints and saved progress.">
+  <title>somosudoku — Nine boxes. One calm mind.</title>
+  <!-- brand:end -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="shared/base.css">
+  <link rel="stylesheet" href="games/sudoku/sudoku.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="site">
+      <a class="brand" href="./" aria-label="somosudoku home">
+        <img class="brandmark" src="logo.png" alt="" width="78" height="78">
+        <span class="brand-name" data-brand="name">somosudoku</span>
+        <small data-brand="tagline">Nine boxes. One calm mind.</small>
+      </a>
+      <div class="timer-box">
+        <span class="timer" id="timer" role="timer" aria-label="Time">0:00</span>
+        <button type="button" class="icon-btn" id="pause-btn" aria-label="Pause" aria-pressed="false">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ic-pause"><rect x="3" y="2" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" rx="1" fill="currentColor"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ic-play"><path d="M4 2.5v11l9.5-5.5z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="sudoku-app" class="game" aria-label="Sudoku">
+      <section class="picker panel" aria-label="Choose a puzzle">
+        <div class="picker-row">
+          <div class="seg" role="group" aria-label="Puzzle type" id="mode-seg">
+            <button type="button" data-mode="daily" aria-pressed="true">Daily</button>
+            <button type="button" data-mode="random" aria-pressed="false">Random</button>
+          </div>
+          <div class="seg" role="group" aria-label="Difficulty" id="diff-seg">
+            <button type="button" data-diff="easy" aria-pressed="false">Easy</button>
+            <button type="button" data-diff="medium" aria-pressed="true">Medium</button>
+            <button type="button" data-diff="hard" aria-pressed="false">Hard</button>
+          </div>
+          <button type="button" class="secondary" id="new-random">New random puzzle</button>
+        </div>
+        <p class="puzzle-meta" id="puzzle-meta">Loading…</p>
+      </section>
+
+      <div class="play">
+        <div class="board-wrap">
+          <div class="board" id="board" role="grid" aria-label="Sudoku board, 9 by 9" aria-describedby="board-help"></div>
+          <div class="pause-cover" id="pause-cover" hidden>
+            <p>Paused</p>
+            <button type="button" class="primary" id="resume-btn">Resume</button>
+          </div>
+          <p class="sr-only" id="board-help">Use arrow keys to move, 1 to 9 to enter, Backspace to erase, N for notes, Ctrl+Z to undo.</p>
+        </div>
+
+        <div class="controls">
+          <div class="tools" role="group" aria-label="Tools">
+            <button type="button" class="tool" id="undo-btn" aria-label="Undo">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Undo</span>
+            </button>
+            <button type="button" class="tool" id="erase-btn" aria-label="Erase">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 20H9L4 15a2 2 0 0 1 0-2.8l8.2-8.2a2 2 0 0 1 2.8 0l5 5a2 2 0 0 1 0 2.8L13 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8 9 7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span>Erase</span>
+            </button>
+            <button type="button" class="tool" id="notes-btn" aria-pressed="false" aria-label="Notes">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m13.5 6.5 4 4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span>Notes <b class="notes-state" id="notes-state">off</b></span>
+            </button>
+            <button type="button" class="tool" id="hint-btn" aria-label="Hint: reveal one cell">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+              <span>Hint</span>
+            </button>
+            <button type="button" class="tool" id="check-btn" aria-label="Check for mistakes">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Check</span>
+            </button>
+          </div>
+
+          <div class="pad" id="pad" role="group" aria-label="Number pad"></div>
+
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+
+          <label class="toggle">
+            <input type="checkbox" id="mistakes-toggle">
+            <span>Highlight mistakes as I go</span>
+          </label>
+        </div>
+      </div>
+
+      <section class="panel stats" aria-labelledby="stats-title">
+        <h2 id="stats-title">Your stats</h2>
+        <div class="stats-grid" id="stats"></div>
+        <p class="stats-note">Best times count puzzles solved without hints. Saved in this browser only.</p>
+      </section>
+    </main>
+
+    <div class="celebrate" id="celebrate" role="dialog" aria-modal="true" aria-labelledby="celebrate-title" hidden>
+      <div class="celebrate-card panel">
+        <div class="sparkles" aria-hidden="true"></div>
+        <p class="eyebrow" id="celebrate-kind">Solved</p>
+        <h2 id="celebrate-title">Well done!</h2>
+        <p class="celebrate-time" id="celebrate-time">0:00</p>
+        <p class="celebrate-note" id="celebrate-note"></p>
+        <div class="celebrate-actions">
+          <button type="button" class="primary" id="celebrate-new">New random puzzle</button>
+          <button type="button" class="secondary" id="celebrate-close">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site">Puzzles are made in your browser. Progress and stats stay on this device.</footer>
+  </div>
+  <script src="site.config.js"></script>
+  <script src="games/sudoku/sudoku.js"></script>
+  <script src="games/sudoku/game.js"></script>
+</body>
+</html>
