@@ -14,7 +14,10 @@
     name: "somosudoku",
     tagline: "Nine boxes. One calm mind.",
     description: "A calm daily sudoku in Easy, Medium and Hard, with pencil marks, hints and saved progress.",
-    // Games on this site. A collection would list more here and link to each one.
-    games: [{ id: "sudoku", title: "Sudoku", path: "./" }],
+    // Games on this site, in header-tab order. Paths are relative to the site root.
+    games: [
+      { id: "sudoku", title: "Sudoku", path: "./" },
+      { id: "words", title: "Letterfield", path: "words/" },
+    ],
   };
 });

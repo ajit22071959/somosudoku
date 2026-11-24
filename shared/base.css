@@ -69,6 +69,32 @@ header.site {
   margin-left: 4px;
 }
 
+/* Header tabs between the games on this site. */
+.game-tabs {
+  display: flex;
+  gap: 2px;
+  background: #101a14;
+  border: 1px solid #354b3a;
+  border-radius: 14px;
+  padding: 3px;
+}
+.game-tabs a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  transition: background .18s, color .18s;
+}
+.game-tabs a:hover { background: #24372a; color: var(--ink); }
+.game-tabs a[aria-current="page"] { background: var(--tint); border-color: #526e58; color: var(--ink); }
+
 .panel {
   background: linear-gradient(145deg, #1c2820, var(--paper) 65%);
   border: 1px solid #3b5040;
@@ -136,9 +162,12 @@ footer.site { text-align: center; font-size: 11px; color: #a2b09b; margin: 24px 
   header.site { margin-bottom: 18px; }
 }
 @media (max-width: 520px) {
-  .brand { font-size: 28px; gap: 12px; }
-  .brandmark { width: 60px; height: 60px; border-radius: 14px; }
+  header.site { gap: 12px 10px; }
+  .brand { font-size: 26px; gap: 10px; min-width: 0; }
+  .brandmark { width: 52px; height: 52px; border-radius: 12px; }
   .brand small { display: none; }
+  .game-tabs { order: 3; flex: 1 1 100%; }
+  .game-tabs a { flex: 1 1 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }

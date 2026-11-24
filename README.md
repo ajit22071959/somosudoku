@@ -4,6 +4,11 @@ A calm sudoku for the browser: a daily puzzle in Easy, Medium and Hard that is t
 
 Live site: https://ajit22071959.github.io/somosudoku/
 
+The site has two games, linked by tabs in the header:
+
+- **Sudoku** at `/` (below).
+- **Letterfield** at `/words/`, a crossword-style word-building game for two (see [Letterfield](#letterfield)).
+
 ## What it does
 
 - **Daily puzzles.** Each difficulty has one puzzle per day, made from a seed of the visitor's local date (`YYYY-MM-DD`) and the difficulty, so everyone gets the same grid on the same day. **New random puzzle** makes a fresh one at the chosen difficulty.
@@ -20,16 +25,38 @@ Live site: https://ajit22071959.github.io/somosudoku/
 
 Puzzles are made in the browser. Nothing is sent anywhere.
 
+## Letterfield
+
+A turn-based word game on a 15 × 15 board, for two people sharing one device or one person against the computer. It's an original game name and board layout built on the familiar mechanics of this kind of game.
+
+- **Board and tiles.** 15 × 15 with premium squares (2L, 3L, 2W, 3W and a double-word start star) in Letterfield's own symmetric layout. 100 tiles in the usual English letter mix with the usual point values, including 2 blanks that can be any letter and score 0. Racks hold 7 tiles.
+- **Rules.** The first word covers the centre star; later words must join the board. Tiles go in one row or column with no gaps. Every word formed must be in the word list. Using all 7 tiles adds 50. You can swap tiles (while 7 or more are in the bag) or pass. The game ends when the bag is empty and someone plays their last tile (they gain the value of the other rack, which the other player loses), or after six scoreless turns in a row (everyone loses what's left on their rack).
+- **Playing.** Tap a rack tile and then a square, or drag it. Tap a new tile on the board (or drag it back) to take it back. On a keyboard, click a square and type; Space flips across/down, Backspace takes back the last tile, Enter plays, Esc recalls everything. **Shuffle**, **Recall**, **Swap** and **Pass** sit under the rack. As you place tiles the status line shows the words and the score, or which words aren't in the list, and the Play button shows the score.
+- **Two players.** Names are optional. After each turn a "Pass the device to …" screen hides the board and racks until the next player taps to show their tiles.
+- **Against the computer.** Easy plays short words without blanks and aims for 20–50% of its best score; Medium aims for 55–85%; Hard always plays the highest-scoring move. Moves are found with the anchor-and-cross-check method over a trie, in a web worker, in a few milliseconds on a laptop. The computer never plays the handful of slurs listed in `games/words/ai-skip.txt`; people can still play them, since they're in the official list.
+- **Also:** scoreboard, move history, tiles left in the bag, the letters you haven't seen yet, and win/loss record and best move/game against the computer. The game saves after every move (`somo.words.game` in `localStorage`), so a reload carries on.
+
+### Word list
+
+`games/words/enable.txt` is the **ENABLE** word list (Enhanced North American Benchmark Lexicon, by Alan Beale and M. Cooper), which is in the public domain. It was taken from https://github.com/dolph/dictionary (`enable1.txt`) and trimmed to the 168,551 words of 2–15 letters. About 1.6 MB, 440 KB gzipped as GitHub Pages serves it. The worker loads it once and the browser caches it.
+
 ## Layout
 
 ```
-index.html               page shell (header, board, controls)
+index.html               sudoku page (header, board, controls)
+words/index.html         Letterfield page
 site.config.js           site name, tagline, description, list of games
 shared/base.css          the shared somo look (dark green #101715, soft green gradients)
 games/sudoku/sudoku.js   pure logic: seeding, generator, solver, grader, helpers
 games/sudoku/game.js     the game UI
 games/sudoku/sudoku.css  board and control styles
-scripts/rebrand.js       copies site.config.js into index.html and this README
+games/words/wordlogic.js Letterfield pure logic: bag, trie, move checking, scoring, move generator, AI levels, turns
+games/words/worker.js    loads the word list and finds the computer's moves off the main thread
+games/words/game.js      the Letterfield UI
+games/words/words.css    Letterfield styles
+games/words/enable.txt   ENABLE word list (public domain)
+games/words/ai-skip.txt  words the computer won't play
+scripts/rebrand.js       copies site.config.js into both pages and this README
 tests/                   Node tests
 ```
 
@@ -43,7 +70,7 @@ Edit `name`, `tagline` and `description` in `site.config.js`, then run:
 npm run rebrand
 ```
 
-The script updates the page title, meta description, header and the heading of this README. A test fails if `index.html` is out of step with the config.
+The script updates the page title, meta description and header of both pages, and the heading of this README. A test fails if `index.html` is out of step with the config.
 
 ## Running tests
 
@@ -53,7 +80,7 @@ Node.js 18 or newer. No packages to install.
 npm test
 ```
 
-The tests cover seeding and the daily puzzle (stable per date and difficulty, pinned for one date), the solver (unique, multiple and impossible grids), the generator (unique solution, clue ranges, grading, symmetry, speed), conflict detection, hints, time formatting, stats, and the rebrand script.
+The Letterfield tests cover the bag and swaps, the premium layout, the dictionary and skip list, move checking and scoring (cross words, premiums, blanks, the 50 bonus), the move generator (scores match the checker for every move, blanks, speed with two blanks), the three computer levels, and turns and end-of-game scoring over full computer games. The sudoku tests cover seeding and the daily puzzle (stable per date and difficulty, pinned for one date), the solver (unique, multiple and impossible grids), the generator (unique solution, clue ranges, grading, symmetry, speed), conflict detection, hints, time formatting, stats, and the rebrand script.
 
 ## Local preview
 
@@ -61,4 +88,4 @@ The tests cover seeding and the daily puzzle (stable per date and difficulty, pi
 python3 -m http.server 5070
 ```
 
-Then open http://127.0.0.1:5070/.
+Then open http://127.0.0.1:5070/ (sudoku) or http://127.0.0.1:5070/words/ (Letterfield). Letterfield needs a server rather than `file://`, because it fetches the word list.

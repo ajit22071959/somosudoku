@@ -233,7 +233,7 @@
   .stat h3 { font-size: 11px; letter-spacing: 1px; }
   .stat dl { grid-template-columns: 1fr; font-size: 12px; gap: 0; }
   .stat dd { text-align: left; margin-bottom: 4px; }
-  header.site { flex-wrap: nowrap; gap: 10px; }
+  header.site { gap: 12px 10px; }
   .brand { font-size: 26px; gap: 10px; min-width: 0; }
   .brandmark { width: 52px; height: 52px; border-radius: 12px; }
   .timer-box { gap: 8px; flex: 0 0 auto; }
